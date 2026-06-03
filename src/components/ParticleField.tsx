@@ -1,8 +1,21 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
-const ParticleField = () => {
+type Props = {
+  hoverPos: {
+    x: number;
+    y: number | null;
+  };
+};
+
+const ParticleField = ({ hoverPos }: Props) => {
+
   const mountRef = useRef<HTMLDivElement>(null);
+  const hoverRef = useRef({ x: 0, y: null as number | null });
+
+  useEffect(() => {
+    hoverRef.current = hoverPos;
+    }, [hoverPos]);
 
   useEffect(() => {
 
@@ -68,6 +81,8 @@ const ParticleField = () => {
     // =====================================
     const COUNT = 4000;
 
+    const sizes = new Float32Array(COUNT);
+
     // =====================================
     // Geometry
     // =====================================
@@ -108,6 +123,8 @@ const ParticleField = () => {
       velocities[i3] = 0;
       velocities[i3 + 1] = 0;
       velocities[i3 + 2] = 0;
+
+      sizes[i] = 1.0;
     }
 
     geometry.setAttribute(
@@ -118,19 +135,36 @@ const ParticleField = () => {
       )
     );
 
-    // =====================================
-    // Material
-    // =====================================
-    const material =
-        new THREE.PointsMaterial({
-            color: "#ffffff",
-            size: 0.04,
-            sizeAttenuation: false,
-            transparent: true,
-            opacity: 0.9,
-            blending: THREE.AdditiveBlending,
-            depthWrite: false,
-    });
+    geometry.setAttribute(
+    "aSize",
+    new THREE.BufferAttribute(sizes, 1)
+    );
+
+    const material = new THREE.ShaderMaterial({
+  transparent: true,
+  depthWrite: false,
+  blending: THREE.AdditiveBlending,
+
+  uniforms: {},
+
+  vertexShader: `
+    attribute float aSize;
+
+    void main() {
+      vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+      gl_PointSize = aSize * 2.0;
+      gl_Position = projectionMatrix * mvPosition;
+    }
+  `,
+
+  fragmentShader: `
+    void main() {
+      float d = length(gl_PointCoord - vec2(0.5));
+      float alpha = 1.0 - smoothstep(0.4, 0.5, d);
+      gl_FragColor = vec4(1.0, 1.0, 1.0, alpha);
+    }
+  `,
+});
 
     // =====================================
     // Points
@@ -184,99 +218,96 @@ const ParticleField = () => {
 
       for (let i = 0; i < COUNT; i++) {
 
-        const i3 = i * 3;
+  const i3 = i * 3;
 
-        const x =
-          positions[i3];
+  const x = positions[i3];
+  const y = positions[i3 + 1];
 
-        const y =
-          positions[i3 + 1];
+  let vx = velocities[i3];
+  let vy = velocities[i3 + 1];
 
-        // ================================
-        // Mouse Attraction
-        // ================================
-        const dx =
-          mouse3D.x - x;
+  // =====================================
+  // ① MOUSE FORCE
+  // =====================================
+  const dx = mouse3D.x - x;
+  const dy = mouse3D.y - y;
 
-        const dy =
-          mouse3D.y - y;
+  const dist = Math.sqrt(dx * dx + dy * dy);
+  const radius = 2.5;
 
-        const dist =
-          Math.sqrt(dx * dx + dy * dy);
+  if (dist < radius) {
 
-        // 影響範囲
-        const radius = 2.5;
+    const force = 1.0 - dist / radius;
+    const angle = Math.atan2(dy, dx);
 
-        if (dist < radius) {
+    vx += Math.cos(angle) * force * 0.02;
+    vy += Math.sin(angle) * force * 0.02;
 
-          const force =
-            (1.0 - dist / radius);
+    vx += Math.sin(elapsed + dist) * 0.002;
+    vy += Math.cos(elapsed + dist) * 0.002;
+  }
 
-          const angle =
-            Math.atan2(dy, dx);
+  // =====================================
+  // ② LINK HOVER FORCE（追加しやすい形）
+  // =====================================
+  if (hoverRef.current.y !== null) {
 
-          // 引き寄せ
-          velocities[i3] +=
-            Math.cos(angle)
-            * force
-            * 0.02;
+  const lx = hoverRef.current.x;
+  const ly = hoverRef.current.y;
 
-          velocities[i3 + 1] +=
-            Math.sin(angle)
-            * force
-            * 0.02;
+  const ldx = lx - x;
+  const ldy = ly - y;
 
-          // 回転感
-          velocities[i3] +=
-            Math.sin(elapsed + dist)
-            * 0.002;
+  const ldist = Math.sqrt(ldx * ldx + ldy * ldy);
+  const linkRadius = 2.0;
 
-          velocities[i3 + 1] +=
-            Math.cos(elapsed + dist)
-            * 0.002;
-        }
+  if (ldist < linkRadius) {
 
-        // ================================
-        // 元位置へ戻る力
-        // ================================
-        const ox =
-          origins[i3];
+    const f = 1.0 - ldist / linkRadius;
 
-        const oy =
-          origins[i3 + 1];
+    vx += ldx * f * 0.03;
+    vy += ldy * f * 0.03;
 
-        velocities[i3] +=
-          (ox - x) * 0.002;
+    vx += -ldy * f * 0.005;
+    vy +=  ldx * f * 0.005;
+  }
+}
 
-        velocities[i3 + 1] +=
-          (oy - y) * 0.002;
+  // =====================================
+  // ③ ORIGIN RETURN
+  // =====================================
+  const ox = origins[i3];
+  const oy = origins[i3 + 1];
 
-        // ================================
-        // 減衰
-        // ================================
-        velocities[i3] *= 0.95;
-        velocities[i3 + 1] *= 0.95;
+  vx += (ox - x) * 0.002;
+  vy += (oy - y) * 0.002;
 
-        // ================================
-        // 位置更新
-        // ================================
-        positions[i3] +=
-          velocities[i3];
+  // =====================================
+  // ④ DAMPING
+  // =====================================
+  vx *= 0.95;
+  vy *= 0.95;
 
-        positions[i3 + 1] +=
-          velocities[i3 + 1];
+  velocities[i3] = vx;
+  velocities[i3 + 1] = vy;
 
-        // ================================
-        // 微揺れ
-        // ================================
-        positions[i3 + 2] =
-          Math.sin(
-            elapsed
-            + i * 0.01
-          ) * 0.15;
-      }
+  // =====================================
+  // ⑤ POSITION UPDATE
+  // =====================================
+  positions[i3] += vx;
+  positions[i3 + 1] += vy;
 
-      geometry.attributes.position.needsUpdate = true;
+  // =====================================
+  // ⑥ Z WOBBLE
+  // =====================================
+  positions[i3 + 2] =
+    Math.sin(elapsed + i * 0.01) * 0.15;
+}
+      const posAttr = geometry.attributes.position;
+if (posAttr) posAttr.needsUpdate = true;
+
+const sizeAttr = geometry.attributes.aSize;
+if (sizeAttr) sizeAttr.needsUpdate = true;
 
       renderer.render(
         scene,

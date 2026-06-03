@@ -1,0 +1,35 @@
+.container {
+  padding: 40px 60px 80px;
+  color: white;
+}
+
+.section {
+  margin-bottom: 60px;
+}
+
+.title {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  padding: 16px;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: scale(1.03);
+}
+
+.card:hover .detail {
+  opacity: 1;
+  transform: translateY(0);
+}
