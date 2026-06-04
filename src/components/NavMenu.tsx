@@ -23,7 +23,7 @@ export default function NavMenu({ text, onHoverChange }: NavMenuProps) {
   return (
     <div className={styles.container}>
         <div style={{ color: "white"}}>
-            <h1>{text}</h1>
+            <h1 style={{ margin: "0"}}>{text}</h1>
         </div>
         <nav className={styles.nav}>
           <ul>

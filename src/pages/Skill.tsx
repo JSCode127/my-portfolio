@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import NavMenu from "../components/NavMenu";
-import ParticleField from "../components/ParticleField";
 import styles from "../styles/Skills.module.css";
 
 const skillGroups = [
@@ -50,14 +49,22 @@ const Star = ({ level }: { level: number }) => {
   );
 };
 
-function Skills() {
+type Props = {
+  setMode: (mode: "sphere" | "explode") => void;
+};
+
+function Skills({ setMode }: Props) {
   const [hoverPos, setHoverPos] = useState<{x: number, y: number | null}>({
   x: 0,
   y: null
 });
+
+  useEffect(() => {
+      setMode("explode");
+    }, []);
+
   return (
     <>
-    <ParticleField hoverPos={hoverPos}/>
     <NavMenu text="Skills" onHoverChange={(x, y) => setHoverPos({ x, y })}  />    
     <div className={styles.container}>
       {skillGroups.map((group) => (
