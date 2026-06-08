@@ -2,7 +2,7 @@
 import { Routes, Route, useNavigate } from "react-router-dom";
 
 import Home from "./pages/Home";
-import Profile from "./pages/Profile";
+import About from "./pages/About";
 import Projects from "./pages/Projects";
 import Skills from "./pages/Skill";
 import UniverseCanvas from "./components/UniverseCanvas";
@@ -16,11 +16,19 @@ type TransitionState =
   | "explode"
   | "enterUI";
 
+type TextState =
+  | "JS Portfolio"
+  | "About"
+  | "Skills"
+  | "Projects";
+
 function App() {
   //背景モーション管理
   const [universeMode, setUniverseMode] = useState<"sphere" |"collect" | "explode">("sphere");
   //UI遷移管理
   const [transition, setTransition] = useState<TransitionState>("idle");
+  //ナビゲーションメニュー状態管理
+  const [navText, setNavText] = useState<TextState>("JS Portfolio");
 
   const navigate = useNavigate();
   const navigateWithUniverse = (path: string) => {
@@ -41,6 +49,16 @@ function App() {
         setUniverseMode("explode");
       }
 
+      if (path === "/about") {
+        setNavText("About");
+      } else if (path === "/projects") {
+        setNavText("Projects");
+      } else if (path === "/skills") {
+        setNavText("Skills")
+      } else {
+        setNavText("JS Portfolio")
+      }
+
       setTransition("enterUI");
     }, 1000);
 
@@ -54,12 +72,12 @@ function App() {
     <UniverseCanvas mode={universeMode}  />
     <UITransition state={transition}>
     <NavMenu 
-        text="JS Portfolio"
+        text={navText}
         onNavigate={navigateWithUniverse}
       />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/about" element={<About />} />
         <Route path="/projects" element={<Projects />} />
         <Route path="/skills" element={<Skills />} />
       </Routes>

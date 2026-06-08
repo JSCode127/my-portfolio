@@ -15,7 +15,7 @@ export default function NavMenu({ text, onNavigate }: NavMenuProps) {
         <nav className={styles.nav}>
           <ul>
             <li><button className={`${styles.item} ${styles.delay2}`} onClick={() => onNavigate("/")}>Home</button></li>
-            <li><button className={`${styles.item} ${styles.delay3}`} onClick={() => onNavigate("/profile")}>Profile</button></li>
+            <li><button className={`${styles.item} ${styles.delay3}`} onClick={() => onNavigate("/about")}>About</button></li>
             <li><button className={`${styles.item} ${styles.delay4}`} onClick={() => onNavigate("/skills")}>Skills</button></li>
             <li><button className={`${styles.item} ${styles.delay5}`} onClick={() => onNavigate("/projects")}>Projects</button></li>
           </ul>

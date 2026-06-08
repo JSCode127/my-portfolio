@@ -2,35 +2,66 @@ import styles from "../styles/Skills.module.css";
 
 const skillGroups = [
   {
-    title: "Frontend",
+    title: "Programming Languages",
+    description:
+      "基礎となる言語スキル。構文理解から実装、API連携まで対応可能。",
     skills: [
-      { name: "HTML", level: 5 },
-      { name: "CSS", level: 5 },
       { name: "JavaScript", level: 5 },
       { name: "TypeScript", level: 5 },
-      { name: "React", level: 5 },
-      { name: "Vue.js", level: 5 },
-      { name: "Next.js", level: 4 },
-      { name: "Tailwind CSS", level: 4 },
-      { name: "Jest", level: 3 },
-    ],
-  },
-  {
-    title: "Backend",
-    skills: [
-      { name: "PHP", level: 4 },
-      { name: "WordPress", level: 4 },
       { name: "Python", level: 3 },
+      { name: "PHP", level: 4 },
+      { name: "Java", level: 3 },
       { name: "C#", level: 3 },
       { name: "Kotlin", level: 3 },
     ],
   },
   {
-    title: "Tools",
+    title: "Frontend Frameworks / Libraries",
+    description:
+      "SPA開発やUI構築。状態管理やコンポーネント設計を含めた実装が可能。",
     skills: [
+      { name: "React", level: 5 },
+      { name: "Next.js", level: 4 },
+      { name: "Vue.js", level: 5 },
+      { name: "Tailwind CSS", level: 4 },
+      { name: "Jest", level: 3 },
+    ],
+  },
+  {
+    title: "Backend Frameworks",
+    description:
+      "API設計やサーバーサイド開発。認証・CRUD・簡易設計まで対応可能。",
+    skills: [
+      { name: "Django", level: 3 },
+      { name: "WordPress", level: 4 },
+    ],
+  },
+  {
+    title: "Databases",
+    description:
+      "RDB設計、SQL操作、基本的なパフォーマンスを意識したクエリ設計が可能。",
+    skills: [
+      { name: "MySQL", level: 4 },
+      { name: "PostgreSQL", level: 4 },
+      { name: "SQLServer", level: 3 },
+      { name: "Firebase", level: 3 },
+    ],
+  },
+  {
+    title: "Infrastructure / DevOps",
+    description:
+      "クラウド環境やバージョン管理。基本的なデプロイ・運用理解あり。",
+    skills: [
+      { name: "AWS", level: 4 },
       { name: "Git / GitHub / GitLab", level: 5 },
+    ],
+  },
+  {
+    title: "Design Tools",
+    description:
+      "UI/UXデザイン・バナー制作・プロトタイプ作成が可能。",
+    skills: [
       { name: "Figma", level: 5 },
-      { name: "VS Code", level: 5 },
       { name: "Illustrator", level: 4 },
       { name: "Photoshop", level: 4 },
       { name: "XD", level: 4 },
@@ -55,6 +86,7 @@ function Skills() {
       {skillGroups.map((group) => (
         <div key={group.title} className={`${styles.section} ${styles.item} ${styles.delay2}`}>
           <h2 className={`${styles.title} ${styles.item} ${styles.delay3}`}>{group.title}</h2>
+          <p className={`${styles.description} ${styles.item} ${styles.delay3}`}>{group.description}</p>
 
           <div className={styles.grid}>
             {group.skills.map((skill) => (
