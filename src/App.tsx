@@ -13,29 +13,25 @@ function App() {
   const [universeMode, setUniverseMode] = useState<"sphere" |"collect" | "explode">("sphere");
 
   const navigate = useNavigate();
-  const navigateWithUniverse = (
-    path: string
-  ) => {
+  const navigateWithUniverse = (path: string) => {
 
     setUniverseMode("collect");
 
     setTimeout(() => {
-
       setUniverseMode("explode");
-
     }, 500);
 
     setTimeout(() => {
 
       navigate(path);
 
+      if (path === "/") {
+        setUniverseMode("sphere");
+      } else {
+        setUniverseMode("explode");
+      }
+
     }, 1000);
-
-    setTimeout(() => {
-
-      setUniverseMode("sphere");
-
-    }, 1500);
   };
 
   return (

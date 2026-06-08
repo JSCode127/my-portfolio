@@ -179,8 +179,7 @@ export default function UniverseCanvas({ mode }: Props) {
       points.rotation.y = rotY;
       points.rotation.x = rotX;
 
-      camera.position.x += (rotY * 4 - camera.position.x) * 0.05;
-      camera.position.y += (rotX * 4 - camera.position.y) * 0.05;
+      camera.position.set(0, 0, 8);
       camera.lookAt(0, 0, 0);
 
       composer.render();
