@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-import NavMenu from "../components/NavMenu";
 import styles from "../styles/Skills.module.css";
 
 const skillGroups = [
@@ -49,23 +47,10 @@ const Star = ({ level }: { level: number }) => {
   );
 };
 
-type Props = {
-  setMode: (mode: "sphere" | "explode") => void;
-};
-
-function Skills({ setMode }: Props) {
-  const [hoverPos, setHoverPos] = useState<{x: number, y: number | null}>({
-  x: 0,
-  y: null
-});
-
-  useEffect(() => {
-      setMode("explode");
-    }, []);
+function Skills() {
 
   return (
-    <>
-    <NavMenu text="Skills" onHoverChange={(x, y) => setHoverPos({ x, y })}  />    
+    <>  
     <div className={styles.container}>
       {skillGroups.map((group) => (
         <div key={group.title} className={styles.section}>

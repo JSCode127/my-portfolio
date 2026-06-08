@@ -5,7 +5,7 @@ import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 
 type Props = {
-  mode: "sphere" | "explode";
+  mode: "sphere" | "collect" | "explode";
 };
 
 export default function UniverseCanvas({ mode }: Props) {
@@ -66,6 +66,8 @@ export default function UniverseCanvas({ mode }: Props) {
     const sphereTargets = new Float32Array(COUNT * 3);
     const spreadTargets = new Float32Array(COUNT * 3);
 
+    const centerPositions =  new Float32Array(COUNT * 3);
+
     const sphereRadius = 3.6;
 
     function setSphere(i3: number) {
@@ -90,6 +92,15 @@ export default function UniverseCanvas({ mode }: Props) {
       positions[i3] = spreadTargets[i3];
       positions[i3 + 1] = spreadTargets[i3 + 1];
       positions[i3 + 2] = spreadTargets[i3 + 2];
+
+      centerPositions[i3] =
+        (Math.random() - 0.5) * 0.5;
+
+      centerPositions[i3 + 1] =
+        (Math.random() - 0.5) * 0.5;
+
+      centerPositions[i3 + 2] =
+        (Math.random() - 0.5) * 0.5;
     }
 
     geometry.setAttribute(
@@ -137,19 +148,30 @@ export default function UniverseCanvas({ mode }: Props) {
       rotY += velY;
 
       // ★ ここが核心：常にtarget切り替え
-      const target =
-        modeRef.current === "sphere"
-          ? sphereTargets
-          : spreadTargets;
+      let targetArray = sphereTargets;
+      let speed = 0.04;
+
+      if (modeRef.current === "collect") {
+        targetArray = centerPositions;
+        speed = 0.12;
+      }
+
+      if (modeRef.current === "explode") {
+        targetArray = spreadTargets;
+        speed = 0.06;
+      }
 
       for (let i = 0; i < COUNT; i++) {
         const i3 = i * 3;
 
-        const mix = 0.04;
+        positions[i3] +=
+          (targetArray[i3] - positions[i3]) * speed;
 
-        positions[i3] += (target[i3] - positions[i3]) * mix;
-        positions[i3 + 1] += (target[i3 + 1] - positions[i3 + 1]) * mix;
-        positions[i3 + 2] += (target[i3 + 2] - positions[i3 + 2]) * mix;
+        positions[i3 + 1] +=
+          (targetArray[i3 + 1] - positions[i3 + 1]) * speed;
+
+        positions[i3 + 2] +=
+          (targetArray[i3 + 2] - positions[i3 + 2]) * speed;
       }
 
       geometry.attributes.position.needsUpdate = true;
