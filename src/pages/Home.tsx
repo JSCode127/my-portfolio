@@ -1,9 +1,10 @@
+import styles from "../styles/Home.module.css";
 function Home() {
 
   return (
     <>
       <div style={{color: "white", paddingLeft: "40px"}}>
-        <h3 style={{ margin: "0"}}>FrontEnd Web Developer</h3>
+        <h3 className={`${styles.item} ${styles.delay1}`} style={{margin: "0"}}>FrontEnd Web Developer</h3>
       </div>
     </>
   );

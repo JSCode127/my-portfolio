@@ -8,9 +8,19 @@ import Skills from "./pages/Skill";
 import UniverseCanvas from "./components/UniverseCanvas";
 import { useState } from "react";
 import NavMenu from "./components/NavMenu";
+import UITransition from "./components/UITransition";
+
+type TransitionState =
+  | "idle"
+  | "collect"
+  | "explode"
+  | "enterUI";
 
 function App() {
+  //背景モーション管理
   const [universeMode, setUniverseMode] = useState<"sphere" |"collect" | "explode">("sphere");
+  //UI遷移管理
+  const [transition, setTransition] = useState<TransitionState>("idle");
 
   const navigate = useNavigate();
   const navigateWithUniverse = (path: string) => {
@@ -31,12 +41,18 @@ function App() {
         setUniverseMode("explode");
       }
 
+      setTransition("enterUI");
     }, 1000);
+
+    setTimeout(() => {
+      setTransition("idle");
+    }, 1800);
   };
 
   return (
     <>
     <UniverseCanvas mode={universeMode}  />
+    <UITransition state={transition}>
     <NavMenu 
         text="JS Portfolio"
         onNavigate={navigateWithUniverse}
@@ -47,6 +63,7 @@ function App() {
         <Route path="/projects" element={<Projects />} />
         <Route path="/skills" element={<Skills />} />
       </Routes>
+      </UITransition>
     </>
   );
 }

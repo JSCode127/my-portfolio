@@ -127,11 +127,11 @@ export default function UniverseCanvas({ mode }: Props) {
     let velY = 0;
 
     window.addEventListener("mousemove", (e) => {
-      velY += (e.clientX - window.innerWidth / 2) * 0.000002;
-      velX += (e.clientY - window.innerHeight / 2) * 0.000002;
+      velY += (e.clientX - window.innerWidth / 2) * 0.000001;
+      velX += (e.clientY - window.innerHeight / 2) * 0.000001;
     });
 
-    // const clock = new THREE.Clock();
+    const clock = new THREE.Clock();
 
     // =====================
     // ANIMATE
@@ -139,7 +139,7 @@ export default function UniverseCanvas({ mode }: Props) {
     function animate() {
       requestAnimationFrame(animate);
 
-      // const t = clock.getElapsedTime();
+      const t = clock.getElapsedTime();
 
       velX *= 0.92;
       velY *= 0.92;
@@ -172,12 +172,22 @@ export default function UniverseCanvas({ mode }: Props) {
 
         positions[i3 + 2] +=
           (targetArray[i3 + 2] - positions[i3 + 2]) * speed;
+
+        positions[i3] += Math.sin(t * 0.5 + i3) * 0.0003;
+        positions[i3 + 1] += Math.cos(t * 0.4 + i3) * 0.0003;
+        positions[i3 + 2] += Math.sin(t * 0.3 + i3) * 0.0003;
+
+        positions[i3] += Math.sin(t + i) * 0.0002;
+        positions[i3 + 1] += Math.cos(t + i * 0.5) * 0.0002;
       }
 
       geometry.attributes.position.needsUpdate = true;
 
-      points.rotation.y = rotY;
-      points.rotation.x = rotX;
+      const driftX = Math.sin(t * 0.2) * 0.05;
+      const driftY = Math.cos(t * 0.15) * 0.05;
+
+      points.rotation.y = rotY + driftY;
+      points.rotation.x = rotX + driftX;
 
       camera.position.set(0, 0, 8);
       camera.lookAt(0, 0, 0);

@@ -53,12 +53,12 @@ function Skills() {
     <>  
     <div className={styles.container}>
       {skillGroups.map((group) => (
-        <div key={group.title} className={styles.section}>
-          <h2 className={styles.title}>{group.title}</h2>
+        <div key={group.title} className={`${styles.section} ${styles.item} ${styles.delay2}`}>
+          <h2 className={`${styles.title} ${styles.item} ${styles.delay3}`}>{group.title}</h2>
 
           <div className={styles.grid}>
             {group.skills.map((skill) => (
-              <div key={skill.name} className={styles.card}>
+              <div key={skill.name} className={`${styles.card} ${styles.item} ${styles.delay4}`}>
                 <div>{skill.name}</div>
                 <Star level={skill.level} />
               </div>
