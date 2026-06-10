@@ -55,16 +55,23 @@ function App() {
   return (
     <>
     <UniverseCanvas mode={universeMode}  />
-    <NavMenu 
-        text={navText}
-        onNavigate={navigateWithUniverse}
-      />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/projects" element={<Projects />} />
-        <Route path="/skills" element={<Skills />} />
-      </Routes>
+    <div
+      style={{
+        position: "relative",
+        zIndex: 1000,
+      }}
+    >
+      <NavMenu 
+          text={navText}
+          onNavigate={navigateWithUniverse}
+        />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/skills" element={<Skills />} />
+        </Routes>
+      </div>
     </>
   );
 }
