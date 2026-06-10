@@ -86,3 +86,9 @@
 .value {
   font-size: 14px;
 }
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0px 20px 20px;
+  }
+}
