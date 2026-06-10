@@ -11,6 +11,7 @@ type Props = {
 export default function UniverseCanvas({ mode }: Props) {
   const mountRef = useRef<HTMLDivElement>(null);
   const modeRef = useRef(mode);
+  const shapeRef = useRef(0);
 
   useEffect(() => {
     modeRef.current = mode;
@@ -64,13 +65,17 @@ export default function UniverseCanvas({ mode }: Props) {
     const positions = new Float32Array(COUNT * 3);
 
     const sphereTargets = new Float32Array(COUNT * 3);
+    const torusTargets = new Float32Array(COUNT * 3);
+    const cubeTargets = new Float32Array(COUNT * 3);
+    const galaxyTargets = new Float32Array(COUNT * 3);
+
     const spreadTargets = new Float32Array(COUNT * 3);
 
     const centerPositions =  new Float32Array(COUNT * 3);
 
     const sphereRadius = 3.6;
-
-    function setSphere(i3: number) {
+    //球体
+    function createSphere(i3: number) {
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(2 * Math.random() - 1);
 
@@ -78,11 +83,105 @@ export default function UniverseCanvas({ mode }: Props) {
       sphereTargets[i3 + 1] = sphereRadius * Math.sin(phi) * Math.sin(theta);
       sphereTargets[i3 + 2] = sphereRadius * Math.cos(phi);
     }
+    //ドーナツ
+    function createTorus(i3:number){
+
+      const u = Math.random() * Math.PI * 2;
+      const v = Math.random() * Math.PI * 2;
+
+      const R = 3;
+      const r = 1;
+
+      torusTargets[i3] =
+        (R + r * Math.cos(v)) * Math.cos(u);
+
+      torusTargets[i3+1] =
+        (R + r * Math.cos(v)) * Math.sin(u);
+
+      torusTargets[i3+2] =
+        r * Math.sin(v);
+    }
+    //立方体
+    function createCube(i3: number) {
+      const halfSize = 2;
+
+      const face = Math.floor(Math.random() * 6);
+
+      const u =
+        (Math.random() - 0.5) *
+        halfSize *
+        2;
+
+      const v =
+        (Math.random() - 0.5) *
+        halfSize *
+        2;
+
+      switch (face) {
+
+        case 0: // +X
+          cubeTargets[i3] = halfSize;
+          cubeTargets[i3 + 1] = u;
+          cubeTargets[i3 + 2] = v;
+          break;
+
+        case 1: // -X
+          cubeTargets[i3] = -halfSize;
+          cubeTargets[i3 + 1] = u;
+          cubeTargets[i3 + 2] = v;
+          break;
+
+        case 2: // +Y
+          cubeTargets[i3] = u;
+          cubeTargets[i3 + 1] = halfSize;
+          cubeTargets[i3 + 2] = v;
+          break;
+
+        case 3: // -Y
+          cubeTargets[i3] = u;
+          cubeTargets[i3 + 1] = -halfSize;
+          cubeTargets[i3 + 2] = v;
+          break;
+
+        case 4: // +Z
+          cubeTargets[i3] = u;
+          cubeTargets[i3 + 1] = v;
+          cubeTargets[i3 + 2] = halfSize;
+          break;
+
+        case 5: // -Z
+          cubeTargets[i3] = u;
+          cubeTargets[i3 + 1] = v;
+          cubeTargets[i3 + 2] = -halfSize;
+          break;
+      }
+    }
+    //銀河
+    function createGalaxy(i3:number){
+
+      const angle =
+        Math.random() * Math.PI * 8;
+
+      const radius =
+        Math.random() * 4;
+
+      galaxyTargets[i3] =
+        Math.cos(angle) * radius;
+
+      galaxyTargets[i3+1] =
+        (Math.random() - 0.5) * 0.6;
+
+      galaxyTargets[i3+2] =
+        Math.sin(angle) * radius;
+    }
 
     for (let i = 0; i < COUNT; i++) {
       const i3 = i * 3;
 
-      setSphere(i3);
+      createSphere(i3);
+      createTorus(i3);
+      createCube(i3);
+      createGalaxy(i3);
 
       spreadTargets[i3] = (Math.random() - 0.5) * 18;
       spreadTargets[i3 + 1] = (Math.random() - 0.5) * 12;
@@ -151,6 +250,31 @@ export default function UniverseCanvas({ mode }: Props) {
       let targetArray = sphereTargets;
       let speed = 0.04;
 
+      let shapeTarget = sphereTargets;
+
+      switch(shapeRef.current){
+
+        case 0:
+          shapeTarget = sphereTargets;
+          break;
+
+        case 1:
+          shapeTarget = torusTargets;
+          break;
+
+        case 2:
+          shapeTarget = cubeTargets;
+          break;
+
+        case 3:
+          shapeTarget = galaxyTargets;
+          break;
+      }
+
+      if(modeRef.current === "sphere"){
+        targetArray = shapeTarget;
+      }
+
       if (modeRef.current === "collect") {
         targetArray = centerPositions;
         speed = 0.12;
@@ -215,6 +339,23 @@ export default function UniverseCanvas({ mode }: Props) {
       mount.removeChild(renderer.domElement);
       renderer.dispose();
     };
+  }, []);
+
+  useEffect(() => {
+
+    const handleClick = () => {
+      shapeRef.current =
+        (shapeRef.current + 1) % 4;
+
+      console.log("shape:", shapeRef.current);
+    };
+
+    window.addEventListener("click", handleClick);
+
+    return () => {
+      window.removeEventListener("click", handleClick);
+    };
+
   }, []);
 
   return (
