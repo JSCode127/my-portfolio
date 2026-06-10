@@ -43,9 +43,8 @@ export default function UniverseCanvas({ mode }: Props) {
 
     mount.appendChild(renderer.domElement);
 
-    renderer.domElement.style.position = "absolute";
+    renderer.domElement.style.position = "fixed";
     renderer.domElement.style.inset = "0";
-    renderer.domElement.style.pointerEvents = "none";
 
     // =====================
     // POST PROCESS
@@ -501,29 +500,37 @@ export default function UniverseCanvas({ mode }: Props) {
   }, []);
 
   useEffect(() => {
-
     const handleClick = () => {
       shapeRef.current =
         (shapeRef.current + 1) % 6;
 
       lastShapeChangeRef.current =
-      performance.now() * 0.001;
+        performance.now() * 0.001;
     };
 
-    window.addEventListener("click", handleClick);
+    window.addEventListener(
+      "pointerdown",
+      handleClick
+    );
 
     return () => {
-      window.removeEventListener("click", handleClick);
+      window.removeEventListener(
+        "pointerdown",
+        handleClick
+      );
     };
-
   }, []);
 
   return (
     <div
       ref={mountRef}
       style={{
-        position: "absolute",
-        inset: 0,
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100dvh",
+        overflow: "hidden",
         pointerEvents: "none",
       }}
     />
