@@ -135,7 +135,7 @@
 @media (max-width: 768px) {
   .hamburger {
     display: flex;
-    z-index: 2000;
+    z-index: 20000;
   }
 
   .nav {
@@ -149,7 +149,7 @@
 
     background: rgba(5, 7, 13, 0.6);
 
-    backdrop-filter: blur(10px);
+    backdrop-filter: none;
 
     transition:
       right 0.4s ease,
@@ -158,7 +158,7 @@
 
     padding-top: 100px;
 
-    z-index: 1999;
+    z-index: 19999;
 
     opacity: 0;
     transform: translateX(40px);
