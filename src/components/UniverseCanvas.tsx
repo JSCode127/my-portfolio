@@ -43,6 +43,11 @@ export default function UniverseCanvas({ mode }: Props) {
 
     mount.appendChild(renderer.domElement);
 
+    renderer.domElement.style.position = "fixed";
+    renderer.domElement.style.inset = "0";
+    renderer.domElement.style.zIndex = "-1";
+    renderer.domElement.style.pointerEvents = "none";
+
     // =====================
     // POST PROCESS
     // =====================
