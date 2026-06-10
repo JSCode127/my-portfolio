@@ -43,13 +43,8 @@ export default function UniverseCanvas({ mode }: Props) {
 
     mount.appendChild(renderer.domElement);
 
-    renderer.domElement.style.position = "fixed";
-    renderer.domElement.style.top = "0";
-    renderer.domElement.style.left = "0";
-    renderer.domElement.style.width = "100%";
-    renderer.domElement.style.height = "100%";
-
-    renderer.domElement.style.zIndex = "-9999";
+    renderer.domElement.style.position = "absolute";
+    renderer.domElement.style.inset = "0";
     renderer.domElement.style.pointerEvents = "none";
 
     // =====================
@@ -527,11 +522,10 @@ export default function UniverseCanvas({ mode }: Props) {
     <div
       ref={mountRef}
       style={{
-      position: "fixed",
-      inset: 0,
-      zIndex: -9999,
-      pointerEvents: "none",
-    }}
+        position: "absolute",
+        inset: 0,
+        pointerEvents: "none",
+      }}
     />
   );
 }

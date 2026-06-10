@@ -1,4 +1,4 @@
-import ClickHint from "../components/ClickHont";
+import ClickHint from "../components/ClickHint";
 import styles from "../styles/Home.module.css";
 function Home() {
 

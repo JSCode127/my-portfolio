@@ -54,24 +54,23 @@ function App() {
 
   return (
     <>
-    <UniverseCanvas mode={universeMode}  />
-    <div
-      style={{
-        position: "relative",
-        zIndex: 1000,
-      }}
-    >
-      <NavMenu 
-          text={navText}
-          onNavigate={navigateWithUniverse}
-        />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/skills" element={<Skills />} />
-        </Routes>
-      </div>
+    <div className="canvas-layer">
+      <UniverseCanvas mode={universeMode} />
+    </div>
+
+    <div className="ui-layer">
+      <NavMenu
+        text={navText}
+        onNavigate={navigateWithUniverse}
+      />
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/skills" element={<Skills />} />
+        <Route path="/projects" element={<Projects />} />
+      </Routes>
+    </div>
     </>
   );
 }

@@ -6,3 +6,16 @@ html,
 body {
   overflow-x: hidden;
 }
+
+.canvas-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+
+  pointer-events: none;
+}
+
+.ui-layer {
+  position: relative;
+  z-index: 99999;
+}

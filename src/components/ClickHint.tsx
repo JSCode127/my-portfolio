@@ -9,7 +9,7 @@ export default function ClickHint() {
         <div className={styles.dot}></div>
       </div>
 
-      <p>Click to Universe</p>
+      <p>Click to Evolve</p>
     </div>
   );
 }
