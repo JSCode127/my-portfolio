@@ -15,6 +15,7 @@ export default function UniverseCanvas({ mode }: Props) {
   const lastShapeChangeRef = useRef(0);
 
   useEffect(() => {
+    shapeRef.current = 0;
     modeRef.current = mode;
   }, [mode]);
 
@@ -63,7 +64,9 @@ export default function UniverseCanvas({ mode }: Props) {
     // =====================
     // PARTICLES
     // =====================
-    const COUNT = 14000;
+    const isLowEnd = navigator.hardwareConcurrency <= 4;
+
+    const COUNT = isLowEnd ? 7000 : 14000;
 
     const geometry = new THREE.BufferGeometry();
     const positions = new Float32Array(COUNT * 3);
@@ -438,9 +441,6 @@ export default function UniverseCanvas({ mode }: Props) {
         positions[i3] += Math.sin(t * 0.5 + i3) * 0.0003;
         positions[i3 + 1] += Math.cos(t * 0.4 + i3) * 0.0003;
         positions[i3 + 2] += Math.sin(t * 0.3 + i3) * 0.0003;
-
-        positions[i3] += Math.sin(t + i) * 0.0002;
-        positions[i3 + 1] += Math.cos(t + i * 0.5) * 0.0002;
       }
 
       geometry.attributes.position.needsUpdate = true;

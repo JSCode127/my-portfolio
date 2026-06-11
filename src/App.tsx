@@ -1,54 +1,49 @@
 // App.tsx
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Projects from "./pages/Projects";
 import Skills from "./pages/Skill";
 import UniverseCanvas from "./components/UniverseCanvas";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import NavMenu from "./components/NavMenu";
 
-type TextState =
-  | "JS Portfolio"
-  | "About"
-  | "Skills"
-  | "Projects";
-
 function App() {
-  //背景モーション管理
-  const [universeMode, setUniverseMode] = useState<"sphere" |"collect" | "explode">("sphere");
-  //ナビゲーションメニュー状態管理
-  const [navText, setNavText] = useState<TextState>("JS Portfolio");
-
+  const location = useLocation();
   const navigate = useNavigate();
-  const navigateWithUniverse = (path: string) => {
+  
+  const [transition, setTransition] = useState<
+  "idle" | "collect" | "explode"
+  >("idle");
 
-    setUniverseMode("collect");
+  const navText = useMemo(() => { 
+    switch (location.pathname) { 
+      case "/about": return "About"; 
+      case "/projects": return "Projects"; 
+      case "/skills": return "Skills"; 
+      default: return "JS Portfolio"; 
+    } 
+  }, [location.pathname]);
+  
+  const baseMode = useMemo(() => {
+    return location.pathname === "/" ? "sphere" : "explode";
+  }, [location.pathname]);
+  const universeMode = transition !== "idle" ? transition : baseMode;
+    const navigateWithUniverse = (path: string) => {
+    setTransition("collect");
 
     setTimeout(() => {
-      setUniverseMode("explode");
+      setTransition("explode");
     }, 500);
 
     setTimeout(() => {
-
       navigate(path);
 
-      if (path === "/") {
-        setUniverseMode("sphere");
-      } else {
-        setUniverseMode("explode");
-      }
-
-      if (path === "/about") {
-        setNavText("About");
-      } else if (path === "/projects") {
-        setNavText("Projects");
-      } else if (path === "/skills") {
-        setNavText("Skills")
-      } else {
-        setNavText("JS Portfolio")
-      }
+      // 遷移完了後はidleに戻す
+      setTimeout(() => {
+        setTransition("idle");
+      }, 50);
     }, 1000);
   };
 
