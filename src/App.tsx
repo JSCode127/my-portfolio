@@ -49,10 +49,12 @@ function App() {
 
   return (
     <div
+    className="app-scroll-container"
     style={{
       position: "absolute",
       inset: 0,
       overflowX: "hidden",
+      overflowY: "scroll"
     }}
   >
       <UniverseCanvas mode={universeMode} />

@@ -1,0 +1,101 @@
+.hint {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  z-index: 1000;
+
+  color: white;
+  border: none;
+  background: none;
+  opacity: 0;
+  cursor: pointer;
+  pointer-events: none;
+  transform: translateY(40px) scale(0.8);
+
+  transition:
+    opacity .5s ease,
+    transform .5s ease;
+}
+
+.ring {
+  position: absolute;
+
+  width: 70px;
+  height: 70px;
+
+  border: 1px solid rgba(170,220,255,0.5);
+  border-radius: 50%;
+
+  animation: pulse 2s infinite;
+}
+.mouse {
+  width: 28px;
+  height: 42px;
+
+  border: 2px solid white;
+  border-radius: 18px;
+
+  position: relative;
+}
+.dot {
+  width: 4px;
+  height: 8px;
+
+  background: white;
+
+  border-radius: 10px;
+
+  position: absolute;
+
+  left: 50%;
+  top: 8px;
+
+  transform: translateX(-50%);
+
+  animation: clickAnim 1.5s infinite;
+}
+.hint p {
+  margin-top: 14px;
+
+  font-size: 12px;
+  letter-spacing: 3px;
+
+  opacity: 0.8;
+}
+.visible {
+  opacity: 1;
+  transform: translateY(0);
+
+  pointer-events: auto;
+}
+@keyframes pulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+}
+@keyframes clickAnim {
+  0% {
+    transform: translate(-50%, 12px);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translate(-50%, 0);
+    opacity: 0;
+  }
+}

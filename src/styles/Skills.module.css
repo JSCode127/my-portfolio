@@ -1,6 +1,7 @@
 .container {
   padding: 40px 60px 80px;
   color: white;
+  min-height: 200vh;
 }
 
 .section {

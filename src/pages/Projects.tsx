@@ -1,3 +1,4 @@
+import ScrollTop from "../components/ScrollTop";
 import styles from "../styles/Projects.module.css";
 
 const projects = [
@@ -100,6 +101,7 @@ export default function Projects() {
           </div>
         ))}
       </div>
+      <ScrollTop />
     </div>
   );
 }

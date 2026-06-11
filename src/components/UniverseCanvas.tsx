@@ -413,11 +413,6 @@ export default function UniverseCanvas({ mode }: Props) {
           (shapeRef.current + 1) % 6;
 
         lastShapeChangeRef.current = t;
-
-        console.log(
-          "auto shape",
-          shapeRef.current
-        );
       }
 
       if (shapeRef.current === 2) {

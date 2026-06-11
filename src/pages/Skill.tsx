@@ -1,3 +1,4 @@
+import ScrollTop from "../components/ScrollTop";
 import styles from "../styles/Skills.module.css";
 
 const skillGroups = [
@@ -101,6 +102,7 @@ function Skills() {
         </div>
       ))}
     </div>
+    <ScrollTop />
     </>
   );
 }
