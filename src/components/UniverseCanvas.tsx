@@ -9,30 +9,69 @@ type Props = {
 };
 
 export default function UniverseCanvas({ mode }: Props) {
+  // =====================================
+  // React Ref
+  // =====================================
+
+  // Three.jsを描画するDOM要素
   const mountRef = useRef<HTMLDivElement>(null);
+
+  // 最新のモードを保持
+  // animate()内から参照するためuseRefを利用
   const modeRef = useRef(mode);
+
+  // 現在表示中の形状番号
+  // 0: Sphere
+  // 1: Torus
+  // 2: Saturn
+  // 3: DNA
+  // 4: Galaxy
+  // 5: Cube
   const shapeRef = useRef(0);
+
+  // 最後に形状変更した時刻
+  // 自動切替(8秒)とクリック切替の管理に利用
   const lastShapeChangeRef = useRef(0);
 
+  // modeが変更されたら最新値を保持
+  // requestAnimationFrame内でstateを直接参照すると
+  // 古い値を掴むことがあるためuseRefへ退避
   useEffect(() => {
     shapeRef.current = 0;
     modeRef.current = mode;
   }, [mode]);
 
   useEffect(() => {
+    // =====================================
+    // Three.js 初期設定
+    // =====================================
+
+    // 描画先DOM取得
     const mount = mountRef.current!;
+
+    // 3D空間生成
     const scene = new THREE.Scene();
 
+    // 背景色設定
     scene.background = new THREE.Color("#05070d");
 
+    // カメラ作成
+    // FOV 45°
+    // near 0.1
+    // far 1000
     const camera = new THREE.PerspectiveCamera(
       45,
       window.innerWidth / window.innerHeight,
       0.1,
       1000
     );
+
+    // 初期位置
     camera.position.z = 8;
 
+    // WebGLレンダラー生成
+    // antialias : ジャギー軽減
+    // alpha : 背景透過有効
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
       alpha: true,
@@ -51,8 +90,10 @@ export default function UniverseCanvas({ mode }: Props) {
     // POST PROCESS
     // =====================
     const composer = new EffectComposer(renderer);
+    // Three.js本体描画
     composer.addPass(new RenderPass(scene, camera));
 
+    // 粒子を発光させるポストエフェクト
     const bloom = new UnrealBloomPass(
       new THREE.Vector2(window.innerWidth, window.innerHeight),
       1.6,
@@ -64,18 +105,29 @@ export default function UniverseCanvas({ mode }: Props) {
     // =====================
     // PARTICLES
     // =====================
-    const isLowEnd = navigator.hardwareConcurrency <= 4;
+    // CPUコア数が少ない端末は粒子数削減
+    const isLowEnd =
+      navigator.hardwareConcurrency <= 4;
 
-    const COUNT = isLowEnd ? 7000 : 14000;
+    // PC
+    // 14000粒子
+
+    // スマホなど
+    // 7000粒子
+    const COUNT =
+      isLowEnd ? 7000 : 14000;
 
     const geometry = new THREE.BufferGeometry();
+
+    // 現在の粒子座標
     const positions = new Float32Array(COUNT * 3);
 
+    // 各形状の目標座標
+    // 粒子はこれらの座標へ補間移動する
     const sphereTargets = new Float32Array(COUNT * 3);
     const torusTargets = new Float32Array(COUNT * 3);
     const cubeTargets = new Float32Array(COUNT * 3);
     const galaxyTargets = new Float32Array(COUNT * 3);
-
     const saturnTargets = new Float32Array(COUNT * 3);
     const dnaTargets = new Float32Array(COUNT * 3);
 
@@ -339,7 +391,8 @@ export default function UniverseCanvas({ mode }: Props) {
     let rotY = 0;
     let velX = 0;
     let velY = 0;
-
+    // マウス移動量を速度として加算
+    // 慣性付きでゆっくり回転する
     window.addEventListener("mousemove", (e) => {
       velY += (e.clientX - window.innerWidth / 2) * 0.000001;
       velX += (e.clientY - window.innerHeight / 2) * 0.000001;
@@ -348,6 +401,7 @@ export default function UniverseCanvas({ mode }: Props) {
     // =====================
     // ANIMATE
     // =====================
+    // requestAnimationFrameで毎フレーム実行
     function animate() {
       requestAnimationFrame(animate);
 
@@ -359,7 +413,6 @@ export default function UniverseCanvas({ mode }: Props) {
       rotX += velX;
       rotY += velY;
 
-      // ★ ここが核心：常にtarget切り替え
       let targetArray = sphereTargets;
       let speed = 0.04;
 
@@ -395,7 +448,8 @@ export default function UniverseCanvas({ mode }: Props) {
       if(modeRef.current === "sphere"){
         targetArray = shapeTarget;
       }
-
+      // collect
+      // 粒子を中央へ収束
       if (modeRef.current === "collect") {
         targetArray = centerPositions;
         speed = 0.12;
@@ -424,6 +478,11 @@ export default function UniverseCanvas({ mode }: Props) {
       for (let i = 0; i < COUNT; i++) {
         const i3 = i * 3;
 
+        // 線形補間(Lerp)
+        // 現在位置 → 目標位置へ
+        // 少しずつ近づけることで
+        // 滑らかな変形アニメーションを実現
+
         positions[i3] +=
           (targetArray[i3] - positions[i3]) * speed;
 
@@ -433,6 +492,7 @@ export default function UniverseCanvas({ mode }: Props) {
         positions[i3 + 2] +=
           (targetArray[i3 + 2] - positions[i3 + 2]) * speed;
 
+        // 微小ノイズを加えて生命感を演出
         positions[i3] += Math.sin(t * 0.5 + i3) * 0.0003;
         positions[i3 + 1] += Math.cos(t * 0.4 + i3) * 0.0003;
         positions[i3 + 2] += Math.sin(t * 0.3 + i3) * 0.0003;
