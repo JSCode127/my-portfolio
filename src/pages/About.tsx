@@ -13,7 +13,7 @@ export default function About() {
         </p>
 
         <p className={styles.line}>
-          その後、EBAテック株式会社に入社。
+          その後、現会社に入社。
         </p>
 
         <p className={styles.line}>
