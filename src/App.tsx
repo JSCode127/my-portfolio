@@ -53,10 +53,14 @@ function App() {
   };
 
   return (
-    <>
-    <div className="canvas-layer">
+    <div
+    style={{
+      position: "absolute",
+      inset: 0,
+      overflowX: "hidden",
+    }}
+  >
       <UniverseCanvas mode={universeMode} />
-    </div>
 
     <div className="ui-layer">
       <NavMenu
@@ -71,7 +75,7 @@ function App() {
         <Route path="/projects" element={<Projects />} />
       </Routes>
     </div>
-    </>
+    </div>
   );
 }
 
