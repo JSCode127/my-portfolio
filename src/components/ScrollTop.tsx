@@ -10,7 +10,7 @@ export default function ScrollTop() {
     if (!el) return;
 
     const onScroll = () => {
-      setShowTop(el.scrollTop > 30);
+      setShowTop(el.scrollTop > 20);
     };
 
     el.addEventListener("scroll", onScroll);
