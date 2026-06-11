@@ -1,4 +1,3 @@
-import ScrollTop from "../components/ScrollTop";
 import styles from "../styles/About.module.css";
 
 export default function About() {
@@ -46,7 +45,6 @@ export default function About() {
           </div>
         </div>
       </div>
-      <ScrollTop />
     </div>
   );
 }
