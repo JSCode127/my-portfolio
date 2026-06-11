@@ -6,6 +6,8 @@ const skillGroups = [
     description:
       "基礎となる言語スキル。構文理解から実装、API連携まで対応可能。",
     skills: [
+      { name: "HTML", level: 5 },
+      { name: "CSS", level: 5 },
       { name: "JavaScript", level: 5 },
       { name: "TypeScript", level: 5 },
       { name: "Python", level: 3 },
