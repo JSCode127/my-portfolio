@@ -27,6 +27,7 @@ export default function UniverseCanvas({ mode }: Props) {
   // 3: DNA
   // 4: Galaxy
   // 5: Cube
+  // 6: Star
   const shapeRef = useRef(0);
 
   // 最後に形状変更した時刻
@@ -93,10 +94,18 @@ export default function UniverseCanvas({ mode }: Props) {
     // Three.js本体描画
     composer.addPass(new RenderPass(scene, camera));
 
+    // CPUコア数が少ない端末は粒子数削減
+    const isLowEnd =
+      navigator.hardwareConcurrency <= 4;
+
     // 粒子を発光させるポストエフェクト
+    const bloomStrength =
+      isLowEnd
+        ? 0.8
+        : 1.6;
     const bloom = new UnrealBloomPass(
       new THREE.Vector2(window.innerWidth, window.innerHeight),
-      1.6,
+      bloomStrength,
       0.7,
       0.15
     );
@@ -105,17 +114,15 @@ export default function UniverseCanvas({ mode }: Props) {
     // =====================
     // PARTICLES
     // =====================
-    // CPUコア数が少ない端末は粒子数削減
-    const isLowEnd =
-      navigator.hardwareConcurrency <= 4;
-
     // PC
     // 14000粒子
-
     // スマホなど
     // 7000粒子
     const COUNT =
       isLowEnd ? 7000 : 14000;
+    //星形正多面体専用粒子
+    const STAR_COUNT =
+      isLowEnd ? 4000 : 6000;
 
     const geometry = new THREE.BufferGeometry();
 
@@ -130,6 +137,7 @@ export default function UniverseCanvas({ mode }: Props) {
     const galaxyTargets = new Float32Array(COUNT * 3);
     const saturnTargets = new Float32Array(COUNT * 3);
     const dnaTargets = new Float32Array(COUNT * 3);
+    const starTargets = new Float32Array(COUNT * 3);
 
     const spreadTargets = new Float32Array(COUNT * 3);
     const centerPositions =  new Float32Array(COUNT * 3);
@@ -339,6 +347,228 @@ export default function UniverseCanvas({ mode }: Props) {
           THREE.MathUtils.lerp(z1, z2, t);
       }
     }
+    //星形
+    function createKeplerPoinsot() {
+
+      const PHI =
+        (1 + Math.sqrt(5)) / 2;
+
+      const verts = [
+
+        new THREE.Vector3(0, 1, PHI),
+        new THREE.Vector3(0, -1, PHI),
+        new THREE.Vector3(0, 1, -PHI),
+        new THREE.Vector3(0, -1, -PHI),
+
+        new THREE.Vector3(1, PHI, 0),
+        new THREE.Vector3(-1, PHI, 0),
+        new THREE.Vector3(1, -PHI, 0),
+        new THREE.Vector3(-1, -PHI, 0),
+
+        new THREE.Vector3(PHI, 0, 1),
+        new THREE.Vector3(PHI, 0, -1),
+        new THREE.Vector3(-PHI, 0, 1),
+        new THREE.Vector3(-PHI, 0, -1),
+      ];
+
+      // サイズ調整
+      verts.forEach(v => v.multiplyScalar(2));
+
+      const faces = [
+
+        [0,8,4],
+        [0,5,10],
+        [2,4,9],
+        [2,11,5],
+
+        [1,6,8],
+        [1,10,7],
+        [3,9,6],
+        [3,7,11],
+
+        [0,10,8],
+        [1,8,10],
+
+        [2,9,11],
+        [3,11,9],
+
+        [4,2,5],
+        [5,0,4],
+
+        [6,1,7],
+        [7,3,6],
+
+        [8,6,4],
+        [9,4,6],
+
+        [10,5,7],
+        [11,7,5],
+      ];
+
+      // =====================
+      // 辺抽出
+      // =====================
+
+      const edges: [number, number][] = [];
+
+      const edgeMap = new Set<string>();
+
+      faces.forEach(face => {
+
+        const pairs = [
+          [face[0], face[1]],
+          [face[1], face[2]],
+          [face[2], face[0]]
+        ];
+
+        pairs.forEach(([a,b]) => {
+
+          const key =
+            a < b
+              ? `${a}-${b}`
+              : `${b}-${a}`;
+
+          if (!edgeMap.has(key)) {
+
+            edgeMap.add(key);
+
+            edges.push([a,b]);
+          }
+        });
+      });
+
+      // =====================
+      // 粒子配置
+      // =====================
+
+      for (let i = 0; i < STAR_COUNT; i++) {
+
+        const i3 = i * 3;
+
+        const r = Math.random();
+
+        // -----------------
+        // 頂点
+        // -----------------
+
+        if (r < 0.20) {
+
+          const v =
+            verts[
+              Math.floor(
+                Math.random() *
+                verts.length
+              )
+            ];
+
+          starTargets[i3] =
+            v.x +
+            (Math.random()-0.5)*0.05;
+
+          starTargets[i3+1] =
+            v.y +
+            (Math.random()-0.5)*0.05;
+
+          starTargets[i3+2] =
+            v.z +
+            (Math.random()-0.5)*0.05;
+        }
+
+        // -----------------
+        // 辺
+        // -----------------
+
+        else if (r < 0.60) {
+
+          const edge =
+            edges[
+              Math.floor(
+                Math.random() *
+                edges.length
+              )
+            ];
+
+          const a =
+            verts[edge[0]];
+
+          const b =
+            verts[edge[1]];
+
+          const t =
+            Math.random();
+
+          starTargets[i3] =
+            THREE.MathUtils.lerp(
+              a.x,
+              b.x,
+              t
+            );
+
+          starTargets[i3+1] =
+            THREE.MathUtils.lerp(
+              a.y,
+              b.y,
+              t
+            );
+
+          starTargets[i3+2] =
+            THREE.MathUtils.lerp(
+              a.z,
+              b.z,
+              t
+            );
+        }
+
+        // -----------------
+        // 面
+        // -----------------
+
+        else {
+
+          const face =
+            faces[
+              Math.floor(
+                Math.random() *
+                faces.length
+              )
+            ];
+
+          const a = verts[face[0]];
+          const b = verts[face[1]];
+          const c = verts[face[2]];
+
+          const r1 = Math.random();
+          const r2 = Math.random();
+
+          const sr1 =
+            Math.sqrt(r1);
+
+          const u =
+            1 - sr1;
+
+          const v =
+            sr1 * (1-r2);
+
+          const w =
+            sr1 * r2;
+
+          starTargets[i3] =
+            a.x*u +
+            b.x*v +
+            c.x*w;
+
+          starTargets[i3+1] =
+            a.y*u +
+            b.y*v +
+            c.y*w;
+
+          starTargets[i3+2] =
+            a.z*u +
+            b.z*v +
+            c.z*w;
+        }
+      }
+    }
 
     for (let i = 0; i < COUNT; i++) {
       const i3 = i * 3;
@@ -368,6 +598,7 @@ export default function UniverseCanvas({ mode }: Props) {
       centerPositions[i3 + 2] =
         (Math.random() - 0.5) * 0.5;
     }
+    createKeplerPoinsot();
 
     geometry.setAttribute(
       "position",
@@ -443,6 +674,10 @@ export default function UniverseCanvas({ mode }: Props) {
         case 5:
           shapeTarget = cubeTargets;
           break;
+
+        case 6:
+          shapeTarget = starTargets;
+          break;
       }
 
       if(modeRef.current === "sphere"){
@@ -464,14 +699,27 @@ export default function UniverseCanvas({ mode }: Props) {
         t - lastShapeChangeRef.current > 8
       ) {
         shapeRef.current =
-          (shapeRef.current + 1) % 6;
+          (shapeRef.current + 1) % 7;
 
         lastShapeChangeRef.current = t;
       }
 
       if (shapeRef.current === 2) {
         points.rotation.y += 0.006;
-      } else {
+      } else if (shapeRef.current === 6) {
+
+        const pulse =
+          1 + Math.sin(t * 2) * 0.03;
+
+        points.scale.set(
+          pulse,
+          pulse,
+          pulse
+        );
+      }
+      else{
+
+        points.scale.set(1,1,1);
         points.rotation.y += 0.001;
       }
 
@@ -493,9 +741,11 @@ export default function UniverseCanvas({ mode }: Props) {
           (targetArray[i3 + 2] - positions[i3 + 2]) * speed;
 
         // 微小ノイズを加えて生命感を演出
-        positions[i3] += Math.sin(t * 0.5 + i3) * 0.0003;
-        positions[i3 + 1] += Math.cos(t * 0.4 + i3) * 0.0003;
-        positions[i3 + 2] += Math.sin(t * 0.3 + i3) * 0.0003;
+        if(shapeRef.current !== 6){
+          positions[i3] += Math.sin(t * 0.5 + i3) * 0.0003;
+          positions[i3 + 1] += Math.cos(t * 0.4 + i3) * 0.0003;
+          positions[i3 + 2] += Math.sin(t * 0.3 + i3) * 0.0003;
+        }
       }
 
       geometry.attributes.position.needsUpdate = true;
@@ -557,7 +807,7 @@ export default function UniverseCanvas({ mode }: Props) {
   useEffect(() => {
     const handleClick = () => {
       shapeRef.current =
-        (shapeRef.current + 1) % 6;
+        (shapeRef.current + 1) % 7;
 
       lastShapeChangeRef.current =
         performance.now() * 0.001;
