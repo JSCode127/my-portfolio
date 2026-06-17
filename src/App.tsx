@@ -61,6 +61,7 @@ function App() {
 
     <div className="ui-layer">
       <NavMenu
+        key={navText}
         text={navText}
         onNavigate={navigateWithUniverse}
       />

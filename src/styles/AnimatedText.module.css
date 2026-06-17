@@ -1,0 +1,23 @@
+.char {
+  font-size: 30px;
+  font-weight: 700;
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(20px);
+  filter: blur(6px);
+  animation: floatUp 0.6s ease forwards;
+}
+
+@keyframes floatUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+    filter: blur(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}

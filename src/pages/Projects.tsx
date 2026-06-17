@@ -75,10 +75,6 @@ const projects = [
 export default function Projects() {
   return (
     <div className={`${styles.container} ${styles.item} ${styles.delay2}`}>
-      <p className={`${styles.lead} ${styles.item} ${styles.delay3}`}>
-        主要な経歴
-      </p>
-
       <div className={`${styles.list} ${styles.item} ${styles.delay4}`}>
         {projects.map((project) => (
           <div key={project.title} className={styles.card}>

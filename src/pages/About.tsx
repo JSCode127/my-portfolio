@@ -1,10 +1,43 @@
+import ScrollTop from "../components/ScrollTop";
 import styles from "../styles/About.module.css";
+
+const techGroups = [
+  {
+    title: "Frontend",
+    skills: [
+      "React",
+      "TypeScript",
+      "React Router",
+    ],
+  },
+  {
+    title: "Graphics",
+    skills: [
+      "Three.js",
+      "WebGL",
+    ],
+  },
+  {
+    title: "Styling",
+    skills: [
+      "CSS Modules",
+      "Responsive Design",
+    ],
+  },
+  {
+    title: "Deployment",
+    skills: [
+      "GitHub",
+      "Vercel",
+    ],
+  },
+];
 
 export default function About() {
   return (
     <div className={`${styles.container}`}>
       <div className={`${styles.item} ${styles.delay2}`}>
-        <h2 className={styles.subTitle}>略歴</h2>
+        <h2 className={styles.subTitle}>Profile</h2>
         <p className={styles.line}>現在、一児の母。</p>
 
         <p className={styles.line}>
@@ -45,6 +78,66 @@ export default function About() {
           </div>
         </div>
       </div>
+
+      <div className={`${styles.item} ${styles.delay4}`}>
+        <h2 className={styles.subTitle}>
+          About This Portfolio
+        </h2>
+
+        <p className={styles.line}>
+          このポートフォリオサイトは、
+          React・TypeScript・Three.jsを用いて
+          制作した個人開発プロジェクトです。
+        </p>
+
+        <p className={styles.line}>
+          フロントエンド技術の習得状況を可視化するだけでなく、
+          UI/UXやアニメーション表現にもこだわり、
+          設計から実装、公開まで一貫して行いました。
+        </p>
+
+        <p className={styles.line}>
+          背景にはThree.jsを利用した
+          パーティクルアニメーションを実装し、
+          球体・銀河・DNA・土星など複数の形状へ
+          リアルタイムで変形する演出を採用しています。
+        </p>
+
+        <p className={styles.line}>
+          また、ページ遷移時にはパーティクルの収束・拡散演出を行い、
+          単なる情報掲載サイトではなく、
+          視覚的にも楽しめるポートフォリオを目指しました。
+        </p>
+      </div>
+
+      <div className={`${styles.item} ${styles.delay4}`}>
+        <h2 className={styles.subTitle}>
+          Technical Highlights
+        </h2>
+
+        <div className={styles.techGrid}>
+          {techGroups.map((group) => (
+            <div
+              key={group.title}
+              className={styles.techCard}
+            >
+              <h3>{group.title}</h3>
+
+              <div className={styles.skillList}>
+                {group.skills.map((skill) => (
+                  <span
+                    key={skill}
+                    className={styles.skillTag}
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <ScrollTop />
     </div>
   );
 }

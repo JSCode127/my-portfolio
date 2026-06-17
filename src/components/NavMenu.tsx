@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styles from "../styles/Home.module.css";
+import AnimatedText from "./AnimatedText";
 
 type NavMenuProps = {
   text: string;
@@ -20,12 +21,9 @@ export default function NavMenu({
   return (
     <div className={styles.container}>
       <div style={{ color: "white" }}>
-        <h1
-          style={{ margin: "0" }}
-          className={`${styles.item} ${styles.delay1}`}
-        >
-          {text}
-        </h1>
+        <AnimatedText 
+          text={text}
+          key={text} />
       </div>
 
       {/* ハンバーガー */}

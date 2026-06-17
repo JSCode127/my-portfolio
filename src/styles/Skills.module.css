@@ -21,13 +21,26 @@
 
 .card {
   padding: 16px;
-  border: 1px solid rgba(255,255,255,0.2);
+  border:
+    1px solid rgba(255,255,255,0.1);
   border-radius: 8px;
-  transition: transform 0.2s ease;
+  background:
+    rgba(255,255,255,0.05);
+
+  backdrop-filter: blur(10px);
+  transition:
+  transform .3s ease;
 }
 
 .card:hover {
-  transform: scale(1.03);
+  transform: translateY(-4px);
+}
+
+.card h3 {
+  margin: 0;
+  padding-bottom: 16px;
+  color: #aaddff;
+  font-size: 1.1rem;
 }
 
 .card:hover .detail {
