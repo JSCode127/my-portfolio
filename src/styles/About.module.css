@@ -10,6 +10,10 @@
   letter-spacing: 0.02em;
   color: white;
   margin: 0;
+  text-shadow:
+    0 0 8px rgba(0, 0, 0, 0.8),
+    0 0 16px rgba(0, 0, 0, 0.8),
+    0 0 24px rgba(0, 0, 0, 0.8);
 }
 
 
@@ -65,6 +69,10 @@
   font-weight: 800;
   margin-top: 32px;
   margin-bottom: 10px;
+  text-shadow:
+    0 0 8px rgba(0, 0, 0, 0.8),
+    0 0 16px rgba(0, 0, 0, 0.8),
+    0 0 24px rgba(0, 0, 0, 0.8);
 }
 
 .hobbyGrid {

@@ -8,17 +8,29 @@
   font-size: 56px;
   font-weight: 300;
   margin-bottom: 40px;
+  text-shadow:
+    0 0 8px rgba(0, 0, 0, 0.8),
+    0 0 16px rgba(0, 0, 0, 0.8),
+    0 0 24px rgba(0, 0, 0, 0.8);
 }
 
 .lead {
   font-size: 24px;
   margin-bottom: 50px;
+  text-shadow:
+    0 0 8px rgba(0, 0, 0, 0.8),
+    0 0 16px rgba(0, 0, 0, 0.8),
+    0 0 24px rgba(0, 0, 0, 0.8);
 }
 
 .subTitle {
   font-size: 24px;
   font-weight: 800;
   margin-bottom: 10px;
+  text-shadow:
+    0 0 8px rgba(0, 0, 0, 0.8),
+    0 0 16px rgba(0, 0, 0, 0.8),
+    0 0 24px rgba(0, 0, 0, 0.8);
 }
 
 .list {
